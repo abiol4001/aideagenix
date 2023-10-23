@@ -1,11 +1,47 @@
 "use client"
-import { Plus } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
 import { Input } from './ui/input'
+import { Button } from './ui/button'
+import { useState } from 'react'
+import axios from 'axios'
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 
 type Props = {}
 
 const CreateNoteDialog = (props: Props) => {
+    const [input, setInput] = useState("")
+    const router = useRouter()
+
+    const createNote = useMutation({
+        mutationFn: async () => {
+            const response = await axios.post("/api/createNote", {
+                name: input
+            })
+            return response.data
+        }
+    }) 
+
+    console.log(createNote)
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if(input === "") {
+            alert("Please enter a name for your note")
+            return
+        }
+
+        createNote.mutate(undefined, {
+            onSuccess: ({note_id}) => {
+                console.log("Note created!")
+                router.push(`/note/${note_id}`)
+            },
+            onError: (error) => {
+                console.log(error)
+            }
+        })
+    }
   return (
     <Dialog>
         <DialogTrigger>
@@ -23,8 +59,15 @@ const CreateNoteDialog = (props: Props) => {
                       You can create a new note by clicking on the button below.
                 </DialogDescription>
             </DialogHeader>
-            <form action="">
-                <Input placeholder='Name...' />
+            <form onSubmit={handleSubmit}>
+                <Input placeholder='Name...' value={input} onChange={(e)=> setInput(e.target.value)} />
+                <div className='h-4'></div>
+                <div className="flex items-center gap-4">
+                    <Button type='reset' variant={"secondary"}>Cancel</Button>
+                    <Button className='bg-green-600' disabled={createNote.isLoading}>
+                          {createNote.isLoading && <Loader2 className='w-4 h-4 animate-spin mr-2' />}
+                        Create</Button>
+                </div>
             </form>
         </DialogContent>
     </Dialog>
