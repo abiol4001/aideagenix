@@ -10,9 +10,9 @@ const TypewriterTitle = (props: Props) => {
         loop: true,
     }}
     onInit={(typewriter) => {
-        typewriter.typeString("Getting started to work.")
+        typewriter.typeString("🤖 Speed up the creation of your notes.")
         .pauseFor(1000).deleteAll()
-            .typeString("Making impact with AI")
+            .typeString("🎯 Accurate idea generation with AI.")
         .start()
     }} />
   )
