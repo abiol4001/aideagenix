@@ -1,10 +1,11 @@
+import TipTapEditor from '@/components/TipTapEditor'
 import { Button } from '@/components/ui/button'
 import { clerk } from '@/lib/clerk-server'
 import { db } from '@/lib/db'
 import { $notes } from '@/lib/db/schema'
 import { auth } from '@clerk/nextjs'
 import { and, eq } from 'drizzle-orm'
-import { ArrowBigLeft, ArrowLeft, Delete, DeleteIcon, LucideDelete } from 'lucide-react'
+import { ArrowLeft, Delete, DeleteIcon, LucideDelete } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import React from 'react'
@@ -23,7 +24,7 @@ const NotePage = async ({ params: { noteId } }: Props) => {
     }
 
     const user = await clerk.users.getUser(userId)
-    console.log(user)
+    // console.log(user)
     const notes = await db.select().from($notes).where(
         and(
             eq($notes.id, parseInt(noteId)),
@@ -50,8 +51,12 @@ const NotePage = async ({ params: { noteId } }: Props) => {
                         <span>{note.name}</span>
                     </div>
                     <Button>
-                        <LucideDelete />
+                        <DeleteIcon />
                     </Button>
+                </div>
+
+                <div className='mt-5 border-stone-200 shadow-xl border rounded-lg px-16 py-8 w-full'>
+                    <TipTapEditor note={note} />
                 </div>
             </div>
         </div>
