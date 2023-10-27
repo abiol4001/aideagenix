@@ -10,6 +10,7 @@ import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { NoteType } from '@/lib/db/schema'
 import { Loader2 } from 'lucide-react'
+import { useCompletion } from 'ai/react'
 
 
 type Props = {
@@ -19,6 +20,10 @@ type Props = {
 const TipTapEditor = ({note}: Props) => {
     const [editorState, setEditorState] = useState(note.editorState || `<h1>${note.name}</h1>`)
     const [isLoading, setIsLoading] = useState(false)
+
+    const {complete, completion} = useCompletion({
+        api: '/api/completion'
+    })
 
     const saveNote = useMutation({
         mutationFn: async () => {
@@ -36,8 +41,10 @@ const TipTapEditor = ({note}: Props) => {
         addKeyboardShortcuts() {
             return {
                 'Shift-a': () => {
-                    console.log('Activate AI')
-                    return true
+                    // take the last 30 words
+                    const prompt = this.editor.getText().split(" ").slice(-30).join(" ");
+                    complete(prompt);
+                    return true;
                 }
             }
         },
@@ -50,6 +57,20 @@ const TipTapEditor = ({note}: Props) => {
             setEditorState(editor.getHTML())
         }
     })
+
+    const lastCompletion = React.useRef("");
+
+    useEffect(() => {
+        if(!editor || !completion) return
+        if (!completion || !editor) return;
+        const prompt = editor.getText().split(" ").slice(-30).join(" ");
+        
+        let slicedCompletion = completion.slice(prompt.length)
+        let diff = completion.slice(lastCompletion.current.length);
+        lastCompletion.current = completion;
+        editor.commands.insertContent(diff);
+    }, [completion, editor])
+    
 
     const delayedState = useDebounce(editorState, 1000)
 
@@ -79,9 +100,10 @@ const TipTapEditor = ({note}: Props) => {
        {editor && <TipTapMenu editor={editor} />}
         <Button disabled>{isLoading && <Loader2 className='mr-1 animate-spin' />}{isLoading ? "Saving" : "Saved"}</Button>
     </div>
-        <div className='prose'>
+        <div className='prose prose-sm w-full mt-4'>
             <EditorContent editor={editor} />
         </div>
+        <span className='mt-4'>Tip: Press <kbd className='px-2 py-1.5 text-xs font-semibold'>Shift + A</kbd> for AI autocomplete</span>
     </>
   )
 }
