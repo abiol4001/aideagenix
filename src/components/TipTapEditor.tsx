@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import {EditorContent, useEditor} from '@tiptap/react'
+import Text from '@tiptap/extension-text'
 import { StarterKit } from '@tiptap/starter-kit'
 import TipTapMenu from './TipTapMenu'
 import { Button } from './ui/button'
@@ -30,9 +31,20 @@ const TipTapEditor = ({note}: Props) => {
             return response.data
         }
     }) 
+
+    const customText = Text.extend({
+        addKeyboardShortcuts() {
+            return {
+                'Shift-a': () => {
+                    console.log('Activate AI')
+                    return true
+                }
+            }
+        },
+    })
     const editor = useEditor({
         autofocus: true,
-        extensions: [StarterKit],
+        extensions: [StarterKit, customText],
         content: editorState,
         onUpdate: ({editor}) => {
             setEditorState(editor.getHTML())
@@ -41,7 +53,7 @@ const TipTapEditor = ({note}: Props) => {
 
     const delayedState = useDebounce(editorState, 1000)
 
-    console.log(delayedState)
+    // console.log(delayedState)
 
     useEffect(() => {
         if(delayedState === "") return

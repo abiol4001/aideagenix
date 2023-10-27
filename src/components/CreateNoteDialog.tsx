@@ -12,10 +12,12 @@ type Props = {}
 
 const CreateNoteDialog = (props: Props) => {
     const [input, setInput] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
 
     const createNote = useMutation({
         mutationFn: async () => {
+            setIsLoading(true)
             const response = await axios.post("/api/createNote", {
                 name: input
             })
@@ -35,10 +37,12 @@ const CreateNoteDialog = (props: Props) => {
         createNote.mutate(undefined, {
             onSuccess: ({note_id}) => {
                 console.log("Note created!")
+                setIsLoading(false)
                 router.push(`/note/${note_id}`)
             },
             onError: (error) => {
                 console.log(error)
+                setIsLoading(false)
             }
         })
     }
@@ -64,8 +68,8 @@ const CreateNoteDialog = (props: Props) => {
                 <div className='h-4'></div>
                 <div className="flex items-center gap-4">
                     <Button type='reset' variant={"secondary"}>Cancel</Button>
-                    <Button className='bg-green-600' disabled={createNote.isLoading}>
-                          {createNote.isLoading && <Loader2 className='w-4 h-4 animate-spin mr-2' />}
+                    <Button className='bg-green-600' disabled={isLoading}>
+                          {isLoading && <Loader2 className='w-4 h-4 animate-spin mr-2' />}
                         Create</Button>
                 </div>
             </form>
