@@ -1,11 +1,12 @@
 import TipTapEditor from '@/components/TipTapEditor'
+import DeleteIcon from '@/components/DeleteIcon'
 import { Button } from '@/components/ui/button'
 import { clerk } from '@/lib/clerk-server'
 import { db } from '@/lib/db'
 import { $notes } from '@/lib/db/schema'
 import { auth } from '@clerk/nextjs'
 import { and, eq } from 'drizzle-orm'
-import { ArrowLeft, DeleteIcon } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import React from 'react'
@@ -50,9 +51,11 @@ const NotePage = async ({ params: { noteId } }: Props) => {
                         <span className='px-1'>/</span>
                         <span>{note.name}</span>
                     </div>
-                    <Button>
-                        <DeleteIcon />
-                    </Button>
+
+                        <div>
+                        <DeleteIcon note={note} />
+                        </div>
+
                 </div>
 
                 <div className='mt-5 border-stone-200 shadow-xl border rounded-lg px-16 py-8 w-full'>

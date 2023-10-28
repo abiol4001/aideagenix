@@ -19,7 +19,10 @@ const DashboardPage = async (props: Props) => {
     const notes = await db.select().from($notes).where(
             eq($notes.userId, userId!)
     )
-    if(!notes) return
+
+    console.log(notes)
+    // if(!notes) return
+    // let notes: any[] = []
     // console.log(notes)
     return (
         <>
@@ -56,13 +59,13 @@ const DashboardPage = async (props: Props) => {
                     <div className="grid sm:grid-cols-3 md:grid-cols-5 grid-cols-1 gap-3">
                         <CreateNoteDialog />
                         {notes.map(note => (
-                            <a href={`/notebook/${note.id}`} key={note.id}>
+                            <a href={`/note/${note.id}`} key={note.id}>
                                 <div className="border border-stone-300 rounded-lg overflow-hidden flex flex-col hover:shadow-xl transition hover:-translate-y-1">
                                     <Image
                                         width={400}
                                         height={200}
                                         alt={note.name}
-                                        src={""}
+                                        src={note.imageUrl || ""}
                                     />
                                     <div className="p-4">
                                         <h3 className="text-xl font-semibold text-gray-900">

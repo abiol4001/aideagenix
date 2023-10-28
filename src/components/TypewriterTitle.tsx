@@ -7,14 +7,14 @@ type Props = {}
 const TypewriterTitle = (props: Props) => {
   return (
     <Typewriter options={{
-        loop: true,
+      loop: true,
     }}
-    onInit={(typewriter) => {
+      onInit={(typewriter) => {
         typewriter.typeString("🤖 Speed up the creation of your notes.")
-        .pauseFor(1000).deleteAll()
-            .typeString("🎯 Accurate idea generation with AI.")
-        .start()
-    }} />
+          .pauseFor(1000).deleteAll()
+          .typeString("🎯 Accurate idea generation with AI.")
+          .start()
+      }} />
   )
 }
 
