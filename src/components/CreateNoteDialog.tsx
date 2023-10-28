@@ -25,7 +25,8 @@ const CreateNoteDialog = (props: Props) => {
         }
     }) 
 
-    console.log(createNote)
+    // Checking why isLoading is not among the attributes
+    // console.log(createNote)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
