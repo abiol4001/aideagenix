@@ -6,14 +6,16 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { NoteType } from '@/lib/db/schema'
+import { useRouter } from 'next/navigation'
+import { useToast } from './ui/use-toast'
 
 type Props = {
     note: NoteType
 }
 
 const DeleteIcon = ({note}: Props) => {
-
-    console.log(note)
+    const { toast } = useToast()
+    const router = useRouter()
 
     const deleteNote = useMutation({
         mutationFn: async (noteId: number) => {
@@ -23,6 +25,32 @@ const DeleteIcon = ({note}: Props) => {
             return response.data
         }
     })
+
+    const handleDeleteNote = async () => {
+        if (note.id !== undefined) {
+            deleteNote.mutate(note.id, {
+                onSuccess: () => {
+                    // queryClient.invalidateQueries({ exact: "notes" });
+                    toast({
+                        description: "Note deleted successfully.",
+                    })
+                    router.push("/dashboard")
+                },
+                onError: (error) => {
+                    console.log(error)
+                    toast({
+                        description: "Unable to delete note.",
+                    })
+                }
+            });
+            toast({
+                description: "Note deleted successfully.",
+            })
+            router.push("/dashboard")
+        }
+
+
+    }
   return (
       <Dialog>
         <DialogTrigger>
@@ -48,7 +76,11 @@ const DeleteIcon = ({note}: Props) => {
                       </DialogClose>
                       <Button variant={"destructive"} onClick={() => {
                           if (note.id !== undefined) {
-                              deleteNote.mutate(note.id);
+                              deleteNote.mutate(note.id, );
+                              toast({
+                                  description: "Note deleted successfully.",
+                              })
+                              router.push("/dashboard")
                           }
                       }}>Delete</Button>
                   </div>
