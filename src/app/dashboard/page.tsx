@@ -1,29 +1,63 @@
+"use client"
 import CreateNoteDialog from '@/components/CreateNoteDialog'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { db } from '@/lib/db'
 import { $notes } from '@/lib/db/schema'
 import { UserButton, auth } from '@clerk/nextjs'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import { eq } from 'drizzle-orm'
 import { ArrowLeftCircleIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 
-type Props = {}
 
-const DashboardPage = async (props: Props) => {
+interface NoteType {
+    id: number;
+    name: string;
+    imageUrl: string;
+    createdAt: string;
+    // Add other properties if present in your notes
+}
 
-    const { userId } = await auth()
 
-    const notes = await db.select().from($notes).where(
-            eq($notes.userId, userId!)
-    )
+const DashboardPage  = () => {
 
-    console.log(notes)
+    // const { userId } = await auth()
+
+    // const notes = await db.select().from($notes).where(
+    //         eq($notes.userId, userId!)
+    // )
+
+    // console.log(notes)
     // if(!notes) return
     // let notes: any[] = []
     // console.log(notes)
+
+    const { data, isLoading } = useQuery({
+        queryKey: ["notes"],
+        queryFn: async () => {
+            const response = await axios(`/api/getNotes`);
+
+            // if (!response.ok) {
+            //     throw new Error("Network response was not ok");
+            // }
+
+            // const data = await response.json();
+            // console.log(data)
+            console.log(response.data.notes)
+            // setUserData(data.data); // Assuming you want to set some user data based on the response
+
+            return response.data.notes; // Return the parsed data
+            // return data; // Return the parsed data
+        },
+        // refetchInterval: 3000
+    });
+
+
+    let notes: any[] = []
     return (
         <>
             <div className="grainy min-h-screen">
@@ -58,7 +92,7 @@ const DashboardPage = async (props: Props) => {
                     {/* display all the notes */}
                     <div className="grid sm:grid-cols-3 md:grid-cols-5 grid-cols-1 gap-3">
                         <CreateNoteDialog />
-                        {notes.map(note => (
+                        {data && data.map((note: NoteType) => (
                             <a href={`/note/${note.id}`} key={note.id}>
                                 <div className="border border-stone-300 rounded-lg overflow-hidden flex flex-col hover:shadow-xl transition hover:-translate-y-1">
                                     <Image

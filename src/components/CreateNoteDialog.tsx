@@ -32,6 +32,9 @@ const CreateNoteDialog = (props: Props) => {
                 noteId: noteId
             })
             return response.data
+        },
+        onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ["notes"] })
         }
     })
 

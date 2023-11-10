@@ -31,6 +31,7 @@ const DeleteIcon = ({note}: Props) => {
             deleteNote.mutate(note.id, {
                 onSuccess: () => {
                     // queryClient.invalidateQueries({ exact: "notes" });
+                    console.log("noted deleted")
                     toast({
                         description: "Note deleted successfully.",
                     })
@@ -38,9 +39,7 @@ const DeleteIcon = ({note}: Props) => {
                 },
                 onError: (error) => {
                     console.log(error)
-                    toast({
-                        description: "Unable to delete note.",
-                    })
+                    toast({ variant: "destructive" })
                 }
             });
             toast({
