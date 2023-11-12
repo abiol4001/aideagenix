@@ -34,6 +34,7 @@ export async function POST(req: Request) {
               .update($notes)
               .set({
                 editorState,
+                updatedAt: new Date()
               })
               .where(eq($notes.id, noteId));
         }

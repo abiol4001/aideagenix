@@ -15,6 +15,7 @@ import React, { useEffect } from 'react'
 
 
 interface NoteType {
+    updatedAt: any
     id: number;
     name: string;
     imageUrl: string;
@@ -47,7 +48,7 @@ const DashboardPage  = () => {
 
             // const data = await response.json();
             // console.log(data)
-            console.log(response.data.notes)
+            // console.log(response.data.notes)
             // setUserData(data.data); // Assuming you want to set some user data based on the response
 
             return response.data.notes; // Return the parsed data
@@ -55,6 +56,12 @@ const DashboardPage  = () => {
         },
         // refetchInterval: 3000
     });
+
+    // if(isLoading) {
+    //     return <div>
+    //         loading
+    //     </div>
+    // }
 
 
     let notes: any[] = []
@@ -83,7 +90,7 @@ const DashboardPage  = () => {
                     <div className="h-8"></div>
                     {/* list all the notes */}
                     {/* if no notes, display this */}
-                    {notes.length === 0 && (
+                    {data?.length === 0 && (
                     <div className="text-center">
                         <h2 className="text-xl text-gray-500">You have no notes yet.</h2>
                     </div>
@@ -92,7 +99,8 @@ const DashboardPage  = () => {
                     {/* display all the notes */}
                     <div className="grid sm:grid-cols-3 md:grid-cols-5 grid-cols-1 gap-3">
                         <CreateNoteDialog />
-                        {data && data.map((note: NoteType) => (
+                        {data && data.sort((a: { updatedAt: any }, b: { updatedAt: any }) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime() )
+                        .map((note: NoteType) => (
                             <a href={`/note/${note.id}`} key={note.id}>
                                 <div className="border border-stone-300 rounded-lg overflow-hidden flex flex-col hover:shadow-xl transition hover:-translate-y-1">
                                     <Image
@@ -107,7 +115,7 @@ const DashboardPage  = () => {
                                         </h3>
                                         <div className="h-1"></div>
                                         <p className="text-sm text-gray-500">
-                                            {new Date(note.createdAt).toLocaleDateString()}
+                                            {new Date(note.updatedAt).toLocaleDateString()}
                                         </p>
                                     </div>
                                 </div>

@@ -5,6 +5,7 @@ export const $notes = pgTable('notes', {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
     imageUrl: text('imageUrl'),
     userId: text('user_id').notNull(),
     editorState: text("editor_state")
